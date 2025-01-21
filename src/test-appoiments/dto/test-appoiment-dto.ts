@@ -1,12 +1,6 @@
 import { IsDateString, IsEnum, IsNotEmpty, IsNotEmptyObject, IsNumber, IsOptional, IsString } from "class-validator";
+import { RelationDto } from "src/database/dto/relation.dto";
 import { TestAppoimentStatus } from "../enums/test-appoiment-status.enum";
-
-class TestAppoimentRelationDto {
-  @IsNotEmpty()
-  @IsNumber()
-  id: number;
-}
-
 export class TestAppoimentDto {
   @IsNotEmpty()
   @IsEnum(TestAppoimentStatus)
@@ -29,11 +23,11 @@ export class TestAppoimentDto {
   finish: string;
 
   @IsNotEmptyObject()
-  test: TestAppoimentRelationDto;
+  test: RelationDto;
 
   @IsNotEmptyObject()
-  student: TestAppoimentRelationDto;
+  student: RelationDto;
 
   @IsNotEmptyObject()
-  instructor: TestAppoimentRelationDto;
+  instructor: RelationDto;
 }

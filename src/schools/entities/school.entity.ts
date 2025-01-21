@@ -1,5 +1,6 @@
 import { DefaultEntity } from "src/database/entities/default-entity";
 import { Instructor } from "src/instructors/entity/instructor.entity";
+import { LessonType } from "src/lesson-types/entity/lesson-type.entity";
 import { Student } from "src/students/entities/student.entity";
 import { Test } from "src/tests/entity/test.entity";
 import { User } from "src/users/entities/user.entity";
@@ -37,4 +38,7 @@ export class School extends DefaultEntity {
 
   @OneToMany(() => Test, (test) => test.school)
   tests?: Test[];
+
+  @OneToMany(() => LessonType, (lessonType) => lessonType.school)
+  lessonTypes?: LessonType[];
 }

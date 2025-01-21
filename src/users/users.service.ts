@@ -71,6 +71,22 @@ export class UsersService {
     })
   }
 
+  async findUserSchool(id: number) {
+    const user = await this.findOne(id);
+
+    if(user.type == UserType.INSTRUCTOR) {
+      const instructor = await this.instructorsService.findByUser(id, true);
+      return instructor.school;
+    }
+    else if(user.type == UserType.STUDENT) {
+      const student = await this.studentsService.findByUser(id, true);
+      return student.school;
+    }
+    else if(user.type == UserType.SCHOOL) {
+      return await this.schoolService.findByUser(id);
+    }
+  }
+
   async update(id: number, user: Partial<User>) {
     const userByEmail = await this.findOneByEmail(user.email);
     if(userByEmail && userByEmail.id != id) {
