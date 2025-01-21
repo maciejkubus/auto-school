@@ -14,5 +14,6 @@ import { TestsService } from './tests.service';
   ],
   controllers: [TestsController],
   providers: [TestsService, ...testsProviders],
+  exports: [TestsService]
 })
 export class TestsModule {}
