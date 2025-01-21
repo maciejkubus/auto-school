@@ -45,4 +45,10 @@ export class TestAppoimentsController {
   async getByTest(@Param('id') id: number, @Request() req) {
     return await this.testAppoimentsService.find({ test: { id: +id } }, ['test']);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('mine')
+  async getMine(@Request() req) {
+    return await this.testAppoimentsService.findAllWithUser(+req.user.id);
+  }
 }

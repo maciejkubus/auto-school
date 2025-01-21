@@ -64,6 +64,16 @@ export class TestAppoimentsService {
     return await this.find({ test: { school: { id: school.id} } }, ['student', 'test', 'instructor', 'test.school'])
   }
 
+  async findAllWithUser(userId: number) {
+    return await this.testAppoimentRepository.find({
+      where: [
+        { student: { id: userId } },
+        { test: { id: userId } },
+      ],
+      relations: ['student', 'test', 'instructor']
+    })
+  }
+
   async update(appoimentId: number, data: TestAppoimentUpdateDto) {
     await this.testAppoimentRepository.update(appoimentId, data);
     return await this.findOne(appoimentId);
