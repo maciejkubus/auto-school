@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { compareSync } from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password-dto';
@@ -12,12 +12,19 @@ export class UsersService {
       private userRepository: Repository<User>,
   ) {}
 
-  async create(user: Partial<User>) {
+  async create(userData: Partial<User>) {
+    const existingUser = await this.findOneByEmail(userData.email);
+    
+    if(existingUser)
+      throw new BadRequestException('Email already exist');
+
     const newUser = new User();
-    newUser.password = user.password;
-    newUser.email = user.email;
-    newUser.type = user.type;
-    return await this.userRepository.save(newUser);
+    newUser.password = userData.password;
+    newUser.email = userData.email;
+    newUser.type = userData.type;
+    const user = await this.create(userData);
+    user.hashPassword(userData.password);
+    return await this.update(user.id, user);
   }
 
   async findOne(id: number) {
@@ -60,11 +67,19 @@ export class UsersService {
   }
 
   async remove(id: number) {
+    throw new ForbiddenException('User cannot be deleted');
     await this.userRepository.delete(id);
   }
 
   async isType(id: number, type: UserType) {
     const user = await this.findOne(id);
     return user.type == type;
+  }
+
+  async archiveUser(id: number) {
+    const user = await this.findOne(id);
+    const date = new Date();
+    user.archived = date;
+    return await this.userRepository.save(user);
   }
 }

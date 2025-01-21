@@ -4,9 +4,8 @@ import { UserType } from '../enums/user-types.enum';
 import { UsersService } from '../users.service';
 
 @Injectable()
-export class IsTypeGuard implements CanActivate {
+export class IsStudentGuard implements CanActivate {
   constructor(
-    private type: UserType,
     private readonly userService: UsersService
   ) {}
 
@@ -15,6 +14,6 @@ export class IsTypeGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const userId = +request.user.id;
-    return this.userService.isType(userId, this.type);
+    return this.userService.isType(userId, UserType.STUDENT);
   }
 }

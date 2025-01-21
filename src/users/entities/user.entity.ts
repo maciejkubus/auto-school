@@ -14,6 +14,9 @@ export class User extends DefaultEntity {
 
   private tempPassword?: string;
 
+  @Column('datetime', { default: null, nullable: true })
+  archived?: Date;
+
   @Column({
     type: "enum",
     enum: UserType,
