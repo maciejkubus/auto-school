@@ -1,5 +1,4 @@
-import { OrGuard } from '@nest-lab/or-guard';
-import { Body, Controller, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ChangePasswordDto } from './dto/change-password-dto';
 import { RegisterDto } from './dto/register-dto';
@@ -8,7 +7,6 @@ import { UserType } from './enums/user-types.enum';
 import { AllowToAddAdminGuard } from './guards/allowed-add-admin';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { IsSchoolGuard } from './guards/is-school.guard';
-import { MyAccountGuard } from './guards/my-account.guard';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -27,34 +25,34 @@ export class UsersController {
     return this.usersService.create({ ...body, type: UserType.SCHOOL});
   }
 
-  @UseGuards(AuthGuard('jwt'), OrGuard([IsSchoolGuard, IsAdminGuard]))
+  @UseGuards(AuthGuard('jwt'), IsSchoolGuard)
   @Post('add-instructor')
   async registerInstructor(@Body() body: RegisterDto) {
     return this.usersService.create({ ...body, type: UserType.INSTRUCTOR});
   }
 
-  @UseGuards(AuthGuard('jwt'), OrGuard([IsSchoolGuard, IsAdminGuard]))
+  @UseGuards(AuthGuard('jwt'), IsSchoolGuard)
   @Post('add-student')
   async registerStudent(@Body() body: RegisterDto) {
     return this.usersService.create({ ...body, type: UserType.STUDENT});
   }
 
-  @UseGuards(AuthGuard('jwt'), OrGuard([MyAccountGuard, IsAdminGuard]))
+  @UseGuards(AuthGuard('jwt'))
   @Get('me')
   async getProfile(@Request() req) {
-    return this.usersService.findOne(req.user.id);
+    return this.usersService.findOne(+req.user.id);
   }
 
-  @UseGuards(AuthGuard('jwt'), OrGuard([MyAccountGuard, IsAdminGuard]))
-  @Patch(':id')
-  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('me/update')
+  update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(+req.user.id, updateUserDto);
   }
 
-  @UseGuards(AuthGuard('jwt'), MyAccountGuard)
-  @Patch(':id/change-password')
-  changePassword(@Param('id') id: number, @Body() changePasswordDto: ChangePasswordDto) {
-    return this.usersService.changePassword(+id, changePasswordDto);
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('me/change-password')
+  changePassword(@Request() req, @Body() changePasswordDto: ChangePasswordDto) {
+    return this.usersService.changePassword(+req.user.id, changePasswordDto);
   }
   
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { compareSync } from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password-dto';
@@ -13,6 +13,7 @@ export class UsersService {
   ) {}
 
   async create(userData: Partial<User>) {
+    console.log(userData)
     const existingUser = await this.findOneByEmail(userData.email);
     
     if(existingUser)
@@ -22,7 +23,8 @@ export class UsersService {
     newUser.password = userData.password;
     newUser.email = userData.email;
     newUser.type = userData.type;
-    const user = await this.create(userData);
+
+    const user = await this.userRepository.save(newUser);
     user.hashPassword(userData.password);
     return await this.update(user.id, user);
   }
@@ -40,8 +42,13 @@ export class UsersService {
   }
 
   async update(id: number, user: Partial<User>) {
+    const userByEmail = await this.findOneByEmail(user.email);
+    if(userByEmail && userByEmail.id != id) {
+      throw new ConflictException('E-mail is used by another user.')
+    }
+
     await this.userRepository.update(id, user);
-    return this.findOne(id);
+    return await this.findOne(id);
   }
 
   async changePassword(id: number, data: ChangePasswordDto) {
@@ -55,15 +62,17 @@ export class UsersService {
     );
     if (!validated) throw new ForbiddenException('Invalid password');
     user.hashPassword(data.newPassword);
-    return await this.userRepository.update(id, user);
+    await this.userRepository.update(id, user);
+    return await this.findOne(id);
   }
 
   async validateUserPassword(email: string, password: string) {
-    const user = await await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       select: ['password', 'email'],
       where: { email },
     });
-    return user && compareSync(password, user.password);
+    const validated: boolean = !!user && compareSync(password, user.password);
+    return validated;
   }
 
   async remove(id: number) {
@@ -71,9 +80,9 @@ export class UsersService {
     await this.userRepository.delete(id);
   }
 
-  async isType(id: number, type: UserType) {
+  async isType(id: number, type: UserType, allowAdmin = false) {
     const user = await this.findOne(id);
-    return user.type == type;
+    return user.type == type || (allowAdmin && user.type == UserType.ADMIN);
   }
 
   async archiveUser(id: number) {

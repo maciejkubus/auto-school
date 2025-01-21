@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -10,13 +10,17 @@ export class AuthenticationService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    return await this.usersService.validateUserPassword(email, password);
+  async validateAndGetUser(email: string, password: string) {
+    const validated = await this.usersService.validateUserPassword(email, password);
+    if(validated)
+      return await this.usersService.findOneByEmail(email)
+    else
+      throw new ForbiddenException("E-mail doesn't match password.")
   }
 
   async login(user: User) {
     return {
-      access_token: this.jwtService.sign({ id: user.id }),
+      access_token: this.jwtService.sign({ id: user.id, email: user.email }),
       user: user,
     };
   }
