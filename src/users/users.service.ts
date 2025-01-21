@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { compareSync } from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password-dto';
@@ -21,14 +21,15 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userRepository.findOne({
+    return await this.userRepository.findOne({
       where: { id }
     })
+  }
 
-    if(!user)
-      throw new NotFoundException('User not found')
-
-    return user;
+  async findOneByEmail(email: string) {
+    return await this.userRepository.findOne({
+      where: { email }
+    })
   }
 
   async update(id: number, user: Partial<User>) {
