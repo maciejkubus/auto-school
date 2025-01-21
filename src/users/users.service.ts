@@ -102,9 +102,9 @@ export class UsersService {
     await this.userRepository.delete(id);
   }
 
-  async isType(id: number, type: UserType, allowAdmin = false) {
+  async isType(id: number, type: UserType) {
     const user = await this.findOne(id);
-    return user.type == type || (allowAdmin && user.type == UserType.ADMIN);
+    return user.type == type;
   }
 
   async archiveUser(id: number) {

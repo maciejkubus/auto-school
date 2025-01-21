@@ -14,6 +14,6 @@ export class IsInstructorGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const userId = +request.user.id;
-    return this.userService.isType(userId, UserType.INSTRUCTOR, true);
+    return this.userService.isType(userId, UserType.INSTRUCTOR);
   }
 }
