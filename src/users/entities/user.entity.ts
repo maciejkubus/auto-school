@@ -28,7 +28,7 @@ export class User extends DefaultEntity {
     this.password = hashSync(password, 8);
   }
 
-  @OneToOne(() => School, (school) => school.user, { nullable: true, eager: true })
+  @OneToOne(() => School, (school) => school.user, { nullable: true })
   @JoinColumn()
   school?: School;
 }

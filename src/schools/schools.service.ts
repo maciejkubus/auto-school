@@ -1,4 +1,5 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { School } from './entities/school.entity';
 
@@ -7,6 +8,8 @@ export class SchoolsService {
   constructor(
     @Inject('SCHOOL_REPOSITORY')
       private schoolRepository: Repository<School>,
+    @Inject(forwardRef(() => UsersService))
+    private userService: UsersService
   ) {}
 
   async create(data: Partial<School>) {
@@ -25,5 +28,28 @@ export class SchoolsService {
     } catch(e) {
       throw new BadRequestException('School data incorrect.')
     }
+  }
+
+  async findOne(id: number) {
+    return await this.schoolRepository.findOne({
+      where: { id }
+    })
+  }
+
+  async findByUser(userId: number) {
+    const user = await this.userService.findOne(userId);
+    const schoolId = user.school.id;
+    return await this.findOne(schoolId);
+  }
+
+  async update(id: number, data: Partial<School>) {
+    await this.schoolRepository.update(id, data);
+    return await this.findOne(id)
+  }
+
+  async updateByUser(userId: number, data: Partial<School>) {
+    const user = await this.userService.findOne(userId);
+    const schoolId = user.school.id;
+    return await this.update(schoolId, data);
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { compareSync } from 'bcryptjs';
 import { SchoolsService } from 'src/schools/schools.service';
 import { Repository } from 'typeorm';
@@ -10,11 +10,11 @@ import { UserType } from './enums/user-types.enum';
 export class UsersService {
   constructor(
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
+    @Inject(forwardRef(() => SchoolsService))
     private schoolService: SchoolsService,
   ) {}
 
   async create(userData: Partial<User>) {
-    console.log(userData)
     const existingUser = await this.findOneByEmail(userData.email);
     
     if(existingUser)
@@ -37,12 +37,14 @@ export class UsersService {
 
   async findOne(id: number) {
     return await this.userRepository.findOne({
+      relations: ['school'],
       where: { id }
     })
   }
 
   async findOneByEmail(email: string) {
     return await this.userRepository.findOne({
+      relations: ['school'],
       where: { email }
     })
   }
