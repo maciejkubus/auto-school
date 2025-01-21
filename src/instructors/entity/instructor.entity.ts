@@ -1,6 +1,7 @@
 import { DefaultEntity } from "src/database/entities/default-entity";
 import { School } from "src/schools/entities/school.entity";
 import { TestAppoiment } from "src/test-appoiments/entities/TestAppoiment.entity";
+import { TimeSlot } from "src/time-slots/entity/time-slot.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
@@ -24,4 +25,7 @@ export class Instructor extends DefaultEntity {
 
   @OneToMany(() => TestAppoiment, (testAppoiment) => testAppoiment.instructor)
   appoiments?: TestAppoiment[];
+
+  @OneToMany(() => TimeSlot, (timeSlot) => timeSlot.instructor)
+  timeSlots?: TimeSlot[];
 }

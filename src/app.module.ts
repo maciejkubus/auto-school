@@ -11,6 +11,7 @@ import { StudentsModule } from './students/students.module';
 import { TestsModule } from './tests/tests.module';
 import { TestAppoimentsModule } from './test-appoiments/test-appoiments.module';
 import { LessonTypesModule } from './lesson-types/lesson-types.module';
+import { TimeSlotsModule } from './time-slots/time-slots.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { LessonTypesModule } from './lesson-types/lesson-types.module';
     TestsModule,
     TestAppoimentsModule,
     LessonTypesModule,
+    TimeSlotsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
