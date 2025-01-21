@@ -36,7 +36,7 @@ export class User extends DefaultEntity {
 
   @OneToOne(() => Instructor, (instructor) => instructor.user, { nullable: true })
   @JoinColumn()
-  instructor?: School;
+  instructor?: Instructor;
 
   @OneToOne(() => Student, (student) => student.user, { nullable: true })
   @JoinColumn()

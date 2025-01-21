@@ -8,7 +8,7 @@ export class SchoolsController {
   constructor(private readonly schoolsService: SchoolsService) {}
 
   @UseGuards(AuthGuard('jwt'))
-  @Get()
+  @Get('me')
   async get(@Request() req) {
     return this.schoolsService.findByUser(+req.user.id);
   }

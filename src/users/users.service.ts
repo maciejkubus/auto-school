@@ -20,11 +20,17 @@ export class UsersService {
     private studentsService: StudentsService,
   ) {}
 
-  async create(userData: Partial<User>) {
+  async create(userData: Partial<User> & { creatorId?: number }) {
     const existingUser = await this.findOneByEmail(userData.email);
     
     if(existingUser)
       throw new BadRequestException('Email already exist');
+
+    let creator: User | null = null;
+
+    if(userData.creatorId) {
+      creator = await this.findOne(userData.creatorId);
+    }
 
     const newUser = new User();
     newUser.password = userData.password;
@@ -36,11 +42,13 @@ export class UsersService {
       newUser.school = school;
     }
     if(userData.instructor) {
-      const instructor = await this.instructorsService.create(userData.instructor);
+      const instructor = await this.instructorsService.create(userData.instructor);  
+      await this.instructorsService.setSchool(instructor.id, creator.school);
       newUser.instructor = instructor;
     }
     if(userData.student) {
-      const student = await this.studentsService.create(userData.student);
+      const student = await this.studentsService.create(userData.student);  
+      await this.studentsService.setSchool(student.id, creator.school);
       newUser.student = student;
     }
 

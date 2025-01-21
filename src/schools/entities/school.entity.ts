@@ -1,6 +1,8 @@
 import { DefaultEntity } from "src/database/entities/default-entity";
+import { Instructor } from "src/instructors/entity/instructor.entity";
+import { Student } from "src/students/entities/student.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 
 @Entity()
 export class School extends DefaultEntity {
@@ -25,4 +27,10 @@ export class School extends DefaultEntity {
   @OneToOne(() => User, (user) => user.school, { nullable: true })
   @JoinColumn()
   user?: User;
+
+  @OneToMany(() => Instructor, (instructor) => instructor.school)
+  instructors?: Instructor[];
+
+  @OneToMany(() => Student, (student) => student.school)
+  students?: Student[];
 }

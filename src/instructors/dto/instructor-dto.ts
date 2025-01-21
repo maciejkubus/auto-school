@@ -3,13 +3,13 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class InstructorDto {
   @IsString()
   @IsNotEmpty()
-  name;
+  name: string;
 
   @IsString()
   @IsNotEmpty()
-  surname;
+  surname: string;
 
   @IsString()
   @IsNotEmpty()
-  title;
+  title: string;
 }

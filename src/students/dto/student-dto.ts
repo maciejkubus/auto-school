@@ -3,9 +3,9 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class StudentDto {
   @IsString()
   @IsNotEmpty()
-  name;
+  name: string;
 
   @IsString()
   @IsNotEmpty()
-  surname;
+  surname: string;
 }

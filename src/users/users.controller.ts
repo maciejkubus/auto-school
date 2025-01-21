@@ -30,14 +30,14 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'), IsSchoolGuard)
   @Post('add-instructor')
-  async registerInstructor(@Body() body: AddInstructorDto) {
-    return this.usersService.create({ ...body, type: UserType.INSTRUCTOR});
+  async registerInstructor(@Body() body: AddInstructorDto, @Request() req) {
+    return this.usersService.create({ ...body, type: UserType.INSTRUCTOR, creatorId: +req.user.id });
   }
 
   @UseGuards(AuthGuard('jwt'), IsSchoolGuard)
   @Post('add-student')
-  async registerStudent(@Body() body: AddStudentDto) {
-    return this.usersService.create({ ...body, type: UserType.STUDENT});
+  async registerStudent(@Body() body: AddStudentDto, @Request() req) {
+    return this.usersService.create({ ...body, type: UserType.STUDENT, creatorId: +req.user.id });
   }
 
   @UseGuards(AuthGuard('jwt'))
