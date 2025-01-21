@@ -1,6 +1,7 @@
 import { DefaultEntity } from "src/database/entities/default-entity";
 import { Instructor } from "src/instructors/entity/instructor.entity";
 import { Student } from "src/students/entities/student.entity";
+import { Test } from "src/tests/entity/test.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 
@@ -33,4 +34,7 @@ export class School extends DefaultEntity {
 
   @OneToMany(() => Student, (student) => student.school)
   students?: Student[];
+
+  @OneToMany(() => Test, (test) => test.school)
+  tests?: Test[];
 }
