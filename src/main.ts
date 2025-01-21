@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix(process.env.URL_PREFIX);
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -15,6 +15,7 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
-  await app.listen(3023);
+  console.log('\x1b[31m%s\x1b[0m', `[SERVER] Launching server on port: ${+process.env.PORT}`);
+  await app.listen(+process.env.PORT);
 }
 bootstrap();
