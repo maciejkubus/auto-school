@@ -30,16 +30,17 @@ export class SchoolsService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, relations: string[] = []) {
     return await this.schoolRepository.findOne({
+      relations,
       where: { id }
     })
   }
 
-  async findByUser(userId: number) {
+  async findByUser(userId: number, relations: string[] = []) {
     const user = await this.userService.findOne(userId);
     const schoolId = user.school.id;
-    return await this.findOne(schoolId);
+    return await this.findOne(schoolId, relations);
   }
 
   async update(id: number, data: Partial<School>) {

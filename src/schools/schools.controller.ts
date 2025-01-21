@@ -14,6 +14,20 @@ export class SchoolsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get('me/instructors')
+  async getInstructors(@Request() req) {
+    const school = await this.schoolsService.findByUser(+req.user.id, ['instructors']);
+    return school.instructors;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me/students')
+  async getStudents(@Request() req) {
+    const school = await this.schoolsService.findByUser(+req.user.id, ['students']);
+    return school.students;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Patch('update')
   update(@Request() req, @Body() updateSchoolDto: SchoolUpdateDto) {
     return this.schoolsService.updateByUser(+req.user.id, updateSchoolDto);
