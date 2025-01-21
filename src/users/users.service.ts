@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { compareSync } from 'bcryptjs';
+import { SchoolsService } from 'src/schools/schools.service';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password-dto';
 import { User } from './entities/user.entity';
@@ -8,8 +9,8 @@ import { UserType } from './enums/user-types.enum';
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject('USER_REPOSITORY')
-      private userRepository: Repository<User>,
+    @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
+    private schoolService: SchoolsService,
   ) {}
 
   async create(userData: Partial<User>) {
@@ -23,6 +24,11 @@ export class UsersService {
     newUser.password = userData.password;
     newUser.email = userData.email;
     newUser.type = userData.type;
+
+    if(userData.school) {
+      const school = await this.schoolService.create(userData.school);
+      newUser.school = school;
+    }
 
     const user = await this.userRepository.save(newUser);
     user.hashPassword(userData.password);

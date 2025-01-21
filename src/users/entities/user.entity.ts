@@ -1,6 +1,7 @@
 import { hashSync } from 'bcryptjs';
 import { DefaultEntity } from "src/database/entities/default-entity";
-import { Column, Entity, Unique } from "typeorm";
+import { School } from 'src/schools/entities/school.entity';
+import { Column, Entity, JoinColumn, OneToOne, Unique } from "typeorm";
 import { UserType } from "../enums/user-types.enum";
 
 @Entity()
@@ -26,4 +27,8 @@ export class User extends DefaultEntity {
   public hashPassword(password: string): void {
     this.password = hashSync(password, 8);
   }
+
+  @OneToOne(() => School, (school) => school.user, { nullable: true, eager: true })
+  @JoinColumn()
+  school?: School;
 }
