@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -19,5 +19,14 @@ export class AuthenticationService {
       access_token: this.jwtService.sign({ id: user.id }),
       user: user,
     };
+  }
+
+  async loginAs(id: number) {
+    const user = await this.usersService.findOne(id);
+
+    if(!user)
+      throw new NotFoundException('User not found')
+
+    return this.login(user);
   }
 }
