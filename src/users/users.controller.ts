@@ -5,6 +5,7 @@ import { ChangePasswordDto } from './dto/change-password-dto';
 import { RegisterDto } from './dto/register-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserType } from './enums/user-types.enum';
+import { AllowToAddAdminGuard } from './guards/allowed-add-admin';
 import { IsAdminGuard } from './guards/is-admin.guard';
 import { IsSchoolGuard } from './guards/is-school.guard';
 import { MyAccountGuard } from './guards/my-account.guard';
@@ -13,6 +14,12 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @UseGuards(AllowToAddAdminGuard)
+  @Post('add-admin')
+  async registerAdmin(@Body() body: RegisterDto) {
+    return this.usersService.create({ ...body, type: UserType.ADMIN});
+  }
 
   @UseGuards(AuthGuard('jwt'), IsAdminGuard)
   @Post('add-school')
