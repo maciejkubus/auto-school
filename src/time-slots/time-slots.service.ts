@@ -32,14 +32,10 @@ export class TimeSlotsService {
       ]
     })
     
-    return items.map(slot => {
-      delete slot.canceled;
-      delete slot.created_at;
-      delete slot.updated_at;
-      delete slot.id;
-      delete slot.instructor;
-      return slot;
-    })
+    return items.map(slot => ({
+      start: slot.start,
+      finish: slot.finish
+    }))
   }
 
   async create(data: TimeSlotDto, userId: number) {
