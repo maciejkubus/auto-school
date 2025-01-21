@@ -60,7 +60,13 @@ export class TimeSlotsService {
 
     const colliding = await this.collidingTime(timeSlot);
     if(colliding.length > 0) {
-      return { ...timeSlot, message: 'collision', colliding}
+      throw new BadRequestException({ 
+        status: 400,
+        message: 'collision', 
+        start: timeSlot.start.toISOString(), 
+        finish: timeSlot.finish.toISOString(),
+        colliding
+      })
     }
 
     await this.timeSlotRepository.save(timeSlot);
