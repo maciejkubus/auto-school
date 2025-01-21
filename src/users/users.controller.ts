@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { AddInstructorDto } from './dto/add-instructor-dtp';
 import { AddSchoolDto } from './dto/add-school-dto';
 import { ChangePasswordDto } from './dto/change-password-dto';
 import { RegisterDto } from './dto/register-dto';
@@ -28,7 +29,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'), IsSchoolGuard)
   @Post('add-instructor')
-  async registerInstructor(@Body() body: RegisterDto) {
+  async registerInstructor(@Body() body: AddInstructorDto) {
     return this.usersService.create({ ...body, type: UserType.INSTRUCTOR});
   }
 

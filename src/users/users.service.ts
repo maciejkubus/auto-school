@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { compareSync } from 'bcryptjs';
+import { InstructorsService } from 'src/instructors/instructors.service';
 import { SchoolsService } from 'src/schools/schools.service';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password-dto';
@@ -12,6 +13,8 @@ export class UsersService {
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
     @Inject(forwardRef(() => SchoolsService))
     private schoolService: SchoolsService,
+    @Inject(forwardRef(() => InstructorsService))
+    private instructorsService: InstructorsService,
   ) {}
 
   async create(userData: Partial<User>) {
@@ -29,6 +32,10 @@ export class UsersService {
       const school = await this.schoolService.create(userData.school);
       newUser.school = school;
     }
+    if(userData.instructor) {
+      const instructor = await this.instructorsService.create(userData.instructor);
+      newUser.instructor = instructor;
+    }
 
     const user = await this.userRepository.save(newUser);
     user.hashPassword(userData.password);
@@ -37,14 +44,14 @@ export class UsersService {
 
   async findOne(id: number) {
     return await this.userRepository.findOne({
-      relations: ['school'],
+      relations: ['school', 'instructor'],
       where: { id }
     })
   }
 
   async findOneByEmail(email: string) {
     return await this.userRepository.findOne({
-      relations: ['school'],
+      relations: ['school', 'instructor'],
       where: { email }
     })
   }

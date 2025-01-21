@@ -1,5 +1,6 @@
 import { hashSync } from 'bcryptjs';
 import { DefaultEntity } from "src/database/entities/default-entity";
+import { Instructor } from 'src/instructors/entity/instructor.entity';
 import { School } from 'src/schools/entities/school.entity';
 import { Column, Entity, JoinColumn, OneToOne, Unique } from "typeorm";
 import { UserType } from "../enums/user-types.enum";
@@ -31,4 +32,8 @@ export class User extends DefaultEntity {
   @OneToOne(() => School, (school) => school.user, { nullable: true })
   @JoinColumn()
   school?: School;
+
+  @OneToOne(() => Instructor, (instructor) => instructor.user, { nullable: true })
+  @JoinColumn()
+  instructor?: School;
 }
