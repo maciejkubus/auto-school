@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AddInstructorDto } from './dto/add-instructor-dtp';
+import { AddInstructorDto } from './dto/add-instructor-dto';
 import { AddSchoolDto } from './dto/add-school-dto';
+import { AddStudentDto } from './dto/add-student-dto';
 import { ChangePasswordDto } from './dto/change-password-dto';
 import { RegisterDto } from './dto/register-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,7 +36,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'), IsSchoolGuard)
   @Post('add-student')
-  async registerStudent(@Body() body: RegisterDto) {
+  async registerStudent(@Body() body: AddStudentDto) {
     return this.usersService.create({ ...body, type: UserType.STUDENT});
   }
 

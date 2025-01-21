@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, ForbiddenException, forwardRef,
 import { compareSync } from 'bcryptjs';
 import { InstructorsService } from 'src/instructors/instructors.service';
 import { SchoolsService } from 'src/schools/schools.service';
+import { StudentsService } from 'src/students/students.service';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password-dto';
 import { User } from './entities/user.entity';
@@ -15,6 +16,8 @@ export class UsersService {
     private schoolService: SchoolsService,
     @Inject(forwardRef(() => InstructorsService))
     private instructorsService: InstructorsService,
+    @Inject(forwardRef(() => StudentsService))
+    private studentsService: StudentsService,
   ) {}
 
   async create(userData: Partial<User>) {
@@ -36,6 +39,10 @@ export class UsersService {
       const instructor = await this.instructorsService.create(userData.instructor);
       newUser.instructor = instructor;
     }
+    if(userData.student) {
+      const student = await this.studentsService.create(userData.student);
+      newUser.student = student;
+    }
 
     const user = await this.userRepository.save(newUser);
     user.hashPassword(userData.password);
@@ -44,7 +51,7 @@ export class UsersService {
 
   async findOne(id: number) {
     return await this.userRepository.findOne({
-      relations: ['school', 'instructor'],
+      relations: ['school', 'instructor', 'student'],
       where: { id }
     })
   }
