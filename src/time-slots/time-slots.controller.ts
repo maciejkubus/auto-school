@@ -24,7 +24,7 @@ export class TimeSlotsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('instructor/:id')
-  async getAll(@Param() id: number) {
+  async getAll(@Param('id') id: number) {
     return await this.timeSlotsService.findForInstructor(+id)
   }
 

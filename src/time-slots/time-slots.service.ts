@@ -1,12 +1,11 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InstructorsService } from 'src/instructors/instructors.service';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { TimeSlotMultipleDto } from './dto/time-slot-multiple.dto';
 import { TimeSlotUpdateDto } from './dto/time-slot-update.dto';
 import { TimeSlotDto } from './dto/time-slot.dto';
 import { TimeSlot } from './entity/time-slot.entity';
-
 @Injectable()
 export class TimeSlotsService {
   constructor(
@@ -24,6 +23,25 @@ export class TimeSlotsService {
     })
   }
 
+  async collidingTime(timeSlot: TimeSlot) {
+    const items = await this.timeSlotRepository.find({
+      relations: ['instructor'],
+      where: [
+        { instructor: { id: timeSlot.instructor.id }, start: Between(timeSlot.start, timeSlot.finish) },
+        { instructor: { id: timeSlot.instructor.id }, finish: Between(timeSlot.start, timeSlot.finish) },
+      ]
+    })
+    
+    return items.map(slot => {
+      delete slot.canceled;
+      delete slot.created_at;
+      delete slot.updated_at;
+      delete slot.id;
+      delete slot.instructor;
+      return slot;
+    })
+  }
+
   async create(data: TimeSlotDto, userId: number) {
     const user = await this.usersService.findOne(userId);
     const instructor = await this.instructorsService.findOne(data.instructor.id, true);
@@ -36,6 +54,15 @@ export class TimeSlotsService {
     timeSlot.finish = new Date(data.finish);
     timeSlot.canceled = data.canceled;
     timeSlot.instructor = instructor;
+
+    if(timeSlot.start.getTime() > timeSlot.finish.getTime())
+      throw new BadRequestException('Finish time must be greater than start time');
+
+    const colliding = await this.collidingTime(timeSlot);
+    if(colliding.length > 0) {
+      return { ...timeSlot, message: 'collision', colliding}
+    }
+
     await this.timeSlotRepository.save(timeSlot);
     return timeSlot;
   }
