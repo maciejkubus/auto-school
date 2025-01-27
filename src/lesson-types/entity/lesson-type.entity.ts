@@ -1,6 +1,7 @@
 import { DefaultEntity } from "src/database/entities/default-entity";
+import { Lesson } from "src/lesson/entity/lesson.entity";
 import { School } from "src/schools/entities/school.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 
 @Entity()
 export class LessonType extends DefaultEntity {
@@ -12,4 +13,7 @@ export class LessonType extends DefaultEntity {
 
   @ManyToOne(() => School, (school) => school.instructors, { nullable: true })
   school?: School;
+
+  @OneToMany(() => Lesson, (lesson) => lesson.lessonType)
+  lessons?: Lesson[];
 }

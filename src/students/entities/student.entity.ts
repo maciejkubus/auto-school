@@ -1,4 +1,5 @@
 import { DefaultEntity } from "src/database/entities/default-entity";
+import { Lesson } from "src/lesson/entity/lesson.entity";
 import { School } from "src/schools/entities/school.entity";
 import { TestAppoiment } from "src/test-appoiments/entities/TestAppoiment.entity";
 import { User } from "src/users/entities/user.entity";
@@ -21,4 +22,7 @@ export class Student extends DefaultEntity {
 
   @OneToMany(() => TestAppoiment, (testAppoiment) => testAppoiment.student)
   appoiments?: TestAppoiment[];
+
+  @OneToMany(() => Lesson, (lesson) => lesson.student)
+  lessons?: Lesson[];
 }

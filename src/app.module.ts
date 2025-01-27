@@ -12,6 +12,7 @@ import { TestsModule } from './tests/tests.module';
 import { TestAppoimentsModule } from './test-appoiments/test-appoiments.module';
 import { LessonTypesModule } from './lesson-types/lesson-types.module';
 import { TimeSlotsModule } from './time-slots/time-slots.module';
+import { LessonModule } from './lesson/lesson.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TimeSlotsModule } from './time-slots/time-slots.module';
     TestAppoimentsModule,
     LessonTypesModule,
     TimeSlotsModule,
+    LessonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,5 @@
 import { DefaultEntity } from "src/database/entities/default-entity";
+import { Lesson } from "src/lesson/entity/lesson.entity";
 import { School } from "src/schools/entities/school.entity";
 import { TestAppoiment } from "src/test-appoiments/entities/TestAppoiment.entity";
 import { TimeSlot } from "src/time-slots/entity/time-slot.entity";
@@ -28,4 +29,7 @@ export class Instructor extends DefaultEntity {
 
   @OneToMany(() => TimeSlot, (timeSlot) => timeSlot.instructor)
   timeSlots?: TimeSlot[];
+
+  @OneToMany(() => Lesson, (lesson) => lesson.instructor)
+  lessons?: Lesson[];
 }

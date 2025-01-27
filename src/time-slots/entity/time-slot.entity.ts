@@ -1,6 +1,7 @@
 import { DefaultEntity } from "src/database/entities/default-entity";
 import { Instructor } from "src/instructors/entity/instructor.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Lesson } from "src/lesson/entity/lesson.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
 
 @Entity()
 export class TimeSlot extends DefaultEntity {
@@ -15,4 +16,8 @@ export class TimeSlot extends DefaultEntity {
 
   @ManyToOne(() => Instructor, (instructor) => instructor.timeSlots, { nullable: true })
   instructor?: Instructor;
+
+  @OneToOne(() => Lesson, (lesson) => lesson.timeSlot, { nullable: true, eager: true, onDelete: "SET NULL" })
+  @JoinColumn()
+  lesson?: Lesson | null;
 }

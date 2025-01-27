@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InstructorsService } from 'src/instructors/instructors.service';
+import { Lesson } from 'src/lesson/entity/lesson.entity';
 import { UsersService } from 'src/users/users.service';
 import { Between, Repository } from 'typeorm';
 import { TimeSlotMultipleDto } from './dto/time-slot-multiple.dto';
@@ -18,7 +19,7 @@ export class TimeSlotsService {
 
   async findOne(id: number) {
     return await this.timeSlotRepository.findOne({
-      relations: ['instructor'],
+      relations: ['instructor', 'lesson'],
       where: { id }
     })
   }
@@ -94,7 +95,7 @@ export class TimeSlotsService {
 
   async findForInstructor(instructorId: number) {
     const timeSlots = await this.timeSlotRepository.find({
-      relations: ['instructor'],
+      relations: ['instructor', 'lesson'],
       where: { instructor: { id: instructorId } }
     });
     return timeSlots.map(timeSlot => {
@@ -112,6 +113,18 @@ export class TimeSlotsService {
 
     await this.timeSlotRepository.update(id, data);
     return await this.findOne(id);
+  }
+
+  async asignLesson(id: number, lesson: Lesson) {
+    const timeSlot = await this.findOne(id);
+    timeSlot.lesson = lesson;
+    await this.timeSlotRepository.save(timeSlot);
+  }
+
+  async clearLesson(id: number) {
+    const timeSlot = await this.findOne(id);
+    timeSlot.lesson = null;
+    await this.timeSlotRepository.save(timeSlot);
   }
 
   async delete(id: number, userId: number) {

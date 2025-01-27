@@ -14,5 +14,6 @@ import { LessonTypesService } from './lesson-types.service';
   ],
   controllers: [LessonTypesController],
   providers: [LessonTypesService, ...lessonTypesProviders],
+  exports: [LessonTypesService]
 })
 export class LessonTypesModule {}
